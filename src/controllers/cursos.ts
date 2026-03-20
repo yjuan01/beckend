@@ -9,7 +9,7 @@ export default {
 
     list: async (request: Request, response: Response) => {
         try {
-            const users = await prisma.alunos.findMany();
+            const users = await prisma.cursos.findMany();
             return response.status(200).json(users);
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -22,13 +22,13 @@ export default {
 
     create: async (request: Request, response: Response) => {
         try {
-        const { name, idade, cpf, email } = request.body;
-        const user = await prisma.alunos.create({
+        const { name, professor, cargaHoraria, descricao } = request.body;
+        const user = await prisma.cursos.create({
             data: {
                 name,
-                idade,
-                cpf,
-                email 
+                professor,
+                cargaHoraria,
+                descricao
             }
         });
         return response.status(201).json(user);
@@ -43,15 +43,15 @@ export default {
 
     update: async (request: Request, response: Response) => { 
         try {
-            const { name, idade, cpf, email } = request.body;
+            const { name, professor, cargaHoraria, descricao } = request.body;
         const { id } = request.params;
-        const user = await prisma.alunos.update({
+        const user = await prisma.cursos.update({
             where: { id: + id },
             data: {
                 name,
-                idade,
-                cpf,
-                email
+                professor,
+                cargaHoraria,
+                descricao
             }
         });
 
