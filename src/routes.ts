@@ -1,34 +1,30 @@
 import { Router } from "express";
 
-import alunosController from "./controllers/alunos"
-import cursosController from "./controllers/cursos"
+import alunosController from "./controllers/alunos";
+import cursosController from "./controllers/cursos";
 
 const routes = Router();
 
-routes.get("/", (request, response) => response.status(200).json({ success: true }));
+routes.get("/", (request, response) =>
+    response.status(200).json({ success: true })
+);
 
-routes.get("/alunos", (request, response) => alunosController.list(request, response));
+// Rotas de alunos
+routes.get("/alunos", alunosController.list);
+routes.get("/alunos/:id", alunosController.getById);
+routes.post("/alunos", alunosController.create);
+routes.put("/alunos/:id", alunosController.update);
+routes.delete("/alunos/:id", alunosController.delete);
 
-routes.post("/alunos", (request, response) => alunosController.create(request, response));
+// Matrícula
+routes.post("/alunos/:id/matricula", alunosController.matricular);
+routes.delete("/alunos/:id/matricula/:cursoId", alunosController.desmatricular);
 
-routes.put("/aluno/:id", (request, response) => alunosController.update(request, response));
+// Rotas de cursos
+routes.get("/cursos", cursosController.list);
+routes.get("/cursos/:id", cursosController.getById);
+routes.post("/cursos", cursosController.create);
+routes.put("/cursos/:id", cursosController.update);
+routes.delete("/cursos/:id", cursosController.delete);
 
-routes.get("/aluno/:id",  alunosController.getById)
-
-routes.delete("/aluno/:id",  alunosController.deleteById)
-
-
-routes.get("/curso", (request, response) => cursosController.list(request, response));
-
-routes.post("/curso", (request, response) => cursosController.create(request, response));
-
-routes.put("/curso/:id", (request, response) => cursosController.update(request, response));
-
-routes.get("/curso/:id",  cursosController.getById)
-
-routes.delete("/curso/:id",  cursosController.deleteById)
-
-routes.put("/aluno/:id/cursos", alunosController.Conectar)
-
-routes.put("/aluno/:id/curso", alunosController.Desconectar)
-export default routes
+export default routes;
