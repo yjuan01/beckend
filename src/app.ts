@@ -2,13 +2,14 @@ import express from "express";
 import cors from "cors";
 import routes from "./routes";
 
-const app = express();
+const app = express()
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//regras do servidor
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
-app.use(routes);
-
+//configura as rotas do servidor
+app.use(routes)
 
 export default app;
