@@ -1,100 +1,81 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+import { prisma } from "../../config/prisma.js";
+import prismaErrorCodes from "../../config/prismaErroCodes.json";
+import { Prisma } from "../../generated/prisma/client.js";
+import { handleErrors } from "../helpers/handleErrors.js";
 
-import { prisma } from "../../config/prisma";
-import prismaErrorCodes from "../../config/prismaErrorCodes.json";
-import { Prisma } from "../../generated/prisma/client";
 
-const handleError = (e: unknown, response: Response) => {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // @ts-ignore
-        return response.status(prismaErrorCodes[e.code] || 500).json(e.message);
-    }
-
-    if (e instanceof Prisma.PrismaClientValidationError) {
-        return response.status(400).json("Invalid data: " + e.message);
-    }
-
-    if (e instanceof Prisma.PrismaClientInitializationError) {
-        return response.status(503).json("Database connection failed.");
-    }
-
-    console.error("Unexpected error:", e);
-    return response.status(500).json("Unknown error. Try again later");
-};
 
 export default {
-
     list: async (request: Request, response: Response) => {
-        try {
-            const cursos = await prisma.cursos.findMany({
-                include: { alunos: true } // 👈
-            });
-            return response.status(200).json(cursos);
-        } catch (e) {
-            return handleError(e, response);
+        try{
+            const users = await prisma.cursos.findMany()
+            return response.status(200).json(users)
+        }catch(e){
+            return handleErrors(e, response)
         }
     },
+  create: async(request: Request, response: Response) => {
+        try{                                                           // @ts-ignore
+            const {nome, professor, cargaHoraria, descricao} = request.body;
 
-    create: async (request: Request, response: Response) => {
-        try {
-            const { nome, professor, cargaHoraria, descricao } = request.body;
-            const curso = await prisma.cursos.create({
-                data: {
+            if (!nome || !cargaHoraria || !descricao) {
+                return response.status(400).json("Dados do curso incompletos");
+            }
+            const user =await prisma.cursos.create({
+                data:{
                     nome,
                     professor,
                     cargaHoraria,
                     descricao
-                }
-            });
-            return response.status(201).json(curso);
-        } catch (e) {
-            return handleError(e, response);
-        }
-    },
-
-    update: async (request: Request, response: Response) => {
-        try {
-            const { nome, professor, cargaHoraria, descricao } = request.body;
-            const { id } = request.params;
-            const curso = await prisma.cursos.update({
-                where: { id: +id },
-                data: {
-                    nome,
-                    professor,
-                    cargaHoraria,
-                    descricao
-                }
-            });
-            return response.status(200).json(curso);
-        } catch (e) {
-            return handleError(e, response);
-        }
-    },
-
-    getById: async (request: Request, response: Response) => {
-        try {
-            const { id } = request.params;
-            const curso = await prisma.cursos.findUnique({
-                where: { id: +id },
-                include: { alunos: true } // 👈
-            });
-            return response.status(200).json(curso);
-        } catch (e) {
-            return handleError(e, response);
-        }
-    },
-
-    delete: async (request: Request, response: Response) => {
-        try {
-            const { id } = request.params;
-            const curso = await prisma.cursos.delete({
-                where: {
-                    id: +id,
                 },
-            });
-            return response.status(200).json(curso);
-        } catch (e) {
-            return handleError(e, response);
+            })
+            return response.status(200).json(user)
+        }catch(e: any){
+            return handleErrors(e, response)
         }
     },
+getByid: async (request: Request, response: Response) => {
+    try {
+      const { id } = request.params;
+      const user = await prisma.cursos.findUnique({
+        where: {
+          id: +id,
+        },
+      });
+      return response.status(200).json(user);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // @ts-ignore
+        return response.status(prismaErrorCodes[e.code] || 500).json(e.message);
+      }
+      return response.status(500).json("Unkown error. Try again later");
+    }
+  },
+  update: async (request: Request, response: Response) => {
+    try {
+        const { id } = request.params;              // @ts-ignore
+        const { name, cpf, email, idade } = request.body;
+
+        const user = await prisma.alunos.update({
+            where: { id: +id },
+            data: { name, email, idade, cpf }
+        });
+
+        return response.status(200).json(user);
+    } catch (e) {
+        return handleErrors(e, response);
+    }
+},
+  delete: async(request: Request, response: Response) => {
+        try{
+            const {id} = request.params
+
+            const user = await prisma.cursos.delete({where:{ id: +id}})
+
+            return response.status(200).json(user)
+        }catch(e){
+            return handleErrors(e, response)
+        }
+    }
 };

@@ -1,30 +1,34 @@
-import { Router } from "express";
-
+import { Router, Request, Response } from "express";
+import { authentication } from "./middlewares/authentication";
 import alunosController from "./controllers/alunos";
 import cursosController from "./controllers/cursos";
-
+import funcionariosController from "./controllers/funcionarios";
 const routes = Router();
 
-routes.get("/", (request, response) =>
-    response.status(200).json({ success: true })
+routes.get("/", (_request: Request, response: Response) =>
+  response.status(200).json({ succes: true }),
 );
 
-// Rotas de alunos
-routes.get("/alunos", alunosController.list);
-routes.get("/alunos/:id", alunosController.getById);
-routes.post("/alunos", alunosController.create);
-routes.put("/alunos/:id", alunosController.update);
-routes.delete("/alunos/:id", alunosController.delete);
+//2°metodo
+routes.get("/alunos", authentication, alunosController.list);
+routes.post("/alunos", authentication, alunosController.create);
+routes.put("/alunos/:id", authentication, alunosController.update);
+routes.get("/alunos/:id", authentication, alunosController.getByid);
+routes.delete("/alunos/:id", authentication, alunosController.delete);
 
-// Matrícula
-routes.post("/alunos/:id/matricula", alunosController.matricular);
-routes.delete("/alunos/:id/matricula/:cursoId", alunosController.desmatricular);
+routes.get("/cursos", authentication, cursosController.list);
+routes.post("/cursos", authentication, cursosController.create);
+routes.put("/cursos/:id", authentication, cursosController.update)
+routes.delete("/cursos/:id", authentication, cursosController.delete)
 
-// Rotas de cursos
-routes.get("/cursos", cursosController.list);
-routes.get("/cursos/:id", cursosController.getById);
-routes.post("/cursos", cursosController.create);
-routes.put("/cursos/:id", cursosController.update);
-routes.delete("/cursos/:id", cursosController.delete);
+routes.post('/matricular/:id', authentication, alunosController.matricular);
+routes.delete('/desmatricular/:id', authentication, alunosController.desmatricular)
+
+routes.post("/funcionarios/login", funcionariosController.login);
+routes.get("/funcionarios", authentication, funcionariosController.list);
+routes.post("/funcionarios", authentication, funcionariosController.create);
+routes.put("/funcionarios/:id", authentication, funcionariosController.update);
+routes.get("/funcionarios/:id", authentication, funcionariosController.getByid);
+routes.delete("/funcionarios/:id", authentication, funcionariosController.delete);
 
 export default routes;

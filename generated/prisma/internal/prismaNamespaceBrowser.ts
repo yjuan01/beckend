@@ -51,8 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  alunos: 'alunos',
-  cursos: 'cursos'
+  Alunos: 'Alunos',
+  Cursos: 'Cursos',
+  Funcionarios: 'Funcionarios'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -70,10 +71,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const AlunosScalarFieldEnum = {
   id: 'id',
-  nome: 'nome',
+  name: 'name',
   idade: 'idade',
-  email: 'email',
   cpf: 'cpf',
+  email: 'email',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -94,10 +95,31 @@ export const CursosScalarFieldEnum = {
 export type CursosScalarFieldEnum = (typeof CursosScalarFieldEnum)[keyof typeof CursosScalarFieldEnum]
 
 
+export const FuncionariosScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  senha: 'senha',
+  admin: 'admin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FuncionariosScalarFieldEnum = (typeof FuncionariosScalarFieldEnum)[keyof typeof FuncionariosScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

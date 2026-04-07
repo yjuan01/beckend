@@ -1,10 +1,5 @@
-import express from "express";
-import routes from "./routes";
+import http from "http"
+import app from "./app"
 
-const app = express();
-
-app.use(express.json()); // 👈 precisa estar aqui
-
-app.use(routes);
-
-app.listen(8080, () => console.log("Servidor rodando na porta 8080"));
+const server = http.createServer(app)
+server.listen(8080, () => console.log("servidor escutando na porta 8080"))
